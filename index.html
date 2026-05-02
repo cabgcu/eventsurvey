@@ -4,380 +4,375 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>CAB Event Survey System</title>
+    
+    <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <style>
-        :root {
-            --bg-dark: #000000;
-            --glass-surface: rgba(0, 0, 0, 0.65); 
-            --glass-border: rgba(255, 255, 255, 0.18);
-            --text-main: #ffffff;
-            --text-muted: #d1d1d6;
-            --gradient-accent: linear-gradient(135deg, #0A84FF, #BF5AF2);
-            --gradient-fire: linear-gradient(135deg, #FF9500, #FF3B30);
-            --gradient-success: linear-gradient(135deg, #34C759, #30B0C7);
-            --radius-card: 28px;
-            --radius-btn: 16px;
-            --blur-bg: 2px; 
-            --blur-card: 12px;
-            --max-width-content: 650px;
-        }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { 
-            margin: 0; 
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif; 
-            color: var(--text-main); 
-            background-color: var(--bg-dark); 
-            min-height: 100vh; 
-            overflow-x: hidden; 
-        }
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
+                    animation: { 'blob': 'blob 20s infinite ease-in-out' },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(40vw, 30vh) scale(1.2)' },
+                            '66%': { transform: 'translate(-30vw, 20vh) scale(0.8)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 1); }
+        ::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.5); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.8); }
+
+        /* Security Input */
         .no-save-pass { -webkit-text-security: disc !important; text-security: disc !important; }
 
-        /* Updated Background Container - Blue/Purple Glow */
-        #bg-container { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            z-index: -2; 
-            overflow: hidden; 
-            background-color: #000000;
-            /* Radial gradients using the specific UI accent colors */
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(10, 132, 255, 0.25) 0%, transparent 50%), /* Blue Top-Left */
-                radial-gradient(circle at 90% 80%, rgba(191, 90, 242, 0.25) 0%, transparent 50%); /* Purple Bottom-Right */
+        /* Glassmorphism utilities */
+        .glass-card {
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
         }
 
+        /* View Switching Logic */
+        .view { display: none; opacity: 0; transform: translateY(15px); transition: 0.4s ease; }
+        .view.active { display: block; opacity: 1; transform: translateY(0); }
+
+        /* Dynamic Backgrounds */
+        #bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; background: #000; }
         .bg-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 2s ease-in-out; }
-        .bg-slide.active { opacity: 0.7; }
-        
-        /* Reduced overlay opacity so the blue/purple shows through */
-        #bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: rgba(0, 0, 0, 0.2); backdrop-filter: blur(var(--blur-bg)); -webkit-backdrop-filter: blur(var(--blur-bg)); }
+        .bg-slide.active { opacity: 0.5; }
 
-        .app-container { position: relative; max-width: 1280px; margin: 0 auto; padding: 20px 16px; min-height: 100vh; display: flex; flex-direction: column; }
-        @media (min-width: 768px) { .app-container { padding: 40px 24px; } }
-
-        .view { display: none; opacity: 0; transform: translateY(10px); transition: 0.3s ease; }
-        .view.active { display: block; opacity: 1; transform: translateY(0); animation: fadeUp 0.4s ease forwards; }
-        
-        .hero-banner { width: 100%; max-width: var(--max-width-content); margin: 0 auto 24px; border-radius: var(--radius-card); overflow: hidden; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.5); background: #111; line-height: 0; }
-        .hero-banner img { width: 100%; height: auto; display: block; }
-        
-        .frosted { background: var(--glass-surface); backdrop-filter: blur(var(--blur-card)); -webkit-backdrop-filter: blur(var(--blur-card)); border: 1px solid var(--glass-border); box-shadow: 0 30px 80px rgba(0,0,0,0.6); }
-        .survey-card { width: 100%; max-width: var(--max-width-content); margin: 0 auto 40px; padding: 24px; border-radius: var(--radius-card); }
-        @media (min-width: 768px) { .survey-card { padding: 40px; } }
-
-        .form-group { margin-bottom: 28px; }
-        .form-label { display: block; margin-bottom: 12px; color: var(--text-muted); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; line-height: 1.4; }
-
-        .required-mark { color: #FF3B30; margin-left: 4px; font-weight: bold; }
-        
-        input.control-item, select.control-item, textarea.control-item { 
-            width: 100%; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); 
-            color: #fff; padding: 16px 20px; border-radius: var(--radius-btn); font-family: inherit; font-size: 1rem; 
-            outline: none; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+        /* Input Controls */
+        .control-item {
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
+            color: white; border-radius: 0.75rem; padding: 1rem 1.25rem; font-family: inherit; font-size: 1rem;
+            outline: none; transition: all 0.3s ease;
         }
-
-        .control-item:focus { 
-            border-color: #0A84FF; 
-            background: rgba(255,255,255,0.12); 
-            box-shadow: 0 0 15px rgba(10, 132, 255, 0.4), 0 0 2px rgba(191, 90, 242, 0.4);
-            transform: scale(1.01);
-        }
-
-        select.control-item { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 24px center; background-size: 16px; padding-right: 52px; }
+        .control-item:focus { border-color: rgba(168, 85, 247, 0.5); background: rgba(255,255,255,0.1); box-shadow: 0 0 15px rgba(168, 85, 247, 0.2); }
+        
+        select.control-item { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 16px; padding-right: 2.5rem; }
         textarea.control-item { min-height: 120px; resize: vertical; }
-        
+
+        /* Form Labels */
+        .form-label { display: block; margin-bottom: 0.75rem; color: rgba(255,255,255,0.5); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.4; }
+        .form-group { margin-bottom: 1.75rem; }
+
+        /* Star Ratings */
         .rating-stars { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-        .star { font-size: 2.2rem; cursor: pointer; color: rgba(255,255,255,0.15); transition: 0.2s; }
-        @media (min-width: 768px) { .star { font-size: 2.8rem; } }
-        .star.selected { color: #FFD60A; filter: drop-shadow(0 0 10px rgba(255,214,10,0.3)); }
-        
-        #dashboard { display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 60px; }
-        @media (min-width: 768px) { #dashboard { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 28px; } }
+        .star { font-size: 2.8rem; cursor: pointer; color: rgba(255,255,255,0.15); transition: 0.2s; }
+        .star.selected { color: #eab308; filter: drop-shadow(0 0 10px rgba(234,179,8,0.3)); }
 
-        .card { border-radius: var(--radius-card); overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; height: 100%; }
-        .card:hover { transform: translateY(-8px); box-shadow: 0 50px 100px rgba(0,0,0,0.9); }
-        .card-header { position: relative; height: 160px; border-bottom: 1px solid var(--glass-border); }
-        .card-img { width: 100%; height: 100%; object-fit: cover; }
-        .card-body { padding: 24px; flex: 1; }
-        
-        .btn { padding: 18px 32px; border-radius: var(--radius-btn); font-weight: 700; cursor: pointer; border: none; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1rem; width: 100%; }
-        @media (min-width: 768px) { .btn { width: auto; } }
-
-        .btn-primary { background: var(--gradient-accent); color: white; box-shadow: 0 10px 20px rgba(10, 132, 255, 0.2); }
-        .btn-ghost { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); }
-        .badge { display: inline-block; padding: 4px 10px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; background: rgba(255,255,255,0.08); margin-right: 6px; }
-        
-        .list-manager { margin-top: 10px; max-height: 250px; overflow-y: auto; padding-right: 8px; }
-        .list-row { display: flex; align-items: center; background: rgba(255,255,255,0.03); padding: 12px 18px; border-radius: 14px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.08); gap: 12px; }
-        .list-name { flex: 1; font-size: 0.95rem; line-height: 1.4; }
-        .list-remove { color: #FF3B30; cursor: pointer; font-size: 1.4rem; font-weight: bold; width: 32px; text-align: center; }
-        
-        /* MOVE CONTROLS */
-        .move-controls { display: flex; gap: 4px; margin-right: 8px; }
-        .move-btn { background: rgba(255, 255, 255, 0.1); border: none; color: white; width: 28px; height: 28px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; transition: 0.2s; }
-        .move-btn:hover { background: rgba(255, 255, 255, 0.2); }
-        .move-btn:disabled { opacity: 0.1; cursor: not-allowed; }
-
-        .modal { position: fixed; inset: 0; z-index: 1000; display: none; justify-content: center; align-items: center; padding: 16px; }
-        .modal.show { display: flex; }
-        .modal-bg { position: absolute; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
-        .modal-content { position: relative; width: 100%; max-width: 400px; background: #000; border-radius: 32px; padding: 32px; border: 1px solid var(--glass-border); }
-        
+        /* Loaders */
         .loader { display: none; width: 18px; height: 18px; border: 2px solid #fff; border-bottom-color: transparent; border-radius: 50%; animation: rotation 1s linear infinite; margin-left: 10px; }
         @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; padding: 16px 24px; border-radius: 100px; background: var(--gradient-success); font-weight: 700; z-index: 2000; display: none; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-        
-        .settings-grid { display: grid; grid-template-columns: 1fr; gap: 40px; }
-        @media (min-width: 992px) { .settings-grid { grid-template-columns: 1fr 1fr; } }
-        .settings-section { margin-bottom: 60px; } 
-        .settings-title { color:var(--text-muted); font-size:0.8rem; font-weight:800; letter-spacing:0.12em; margin-bottom:24px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:12px; text-transform: uppercase; }
 
-        footer { margin-top:auto; padding:60px 0 40px; text-align:center; color: rgba(255, 255, 255, 0.4); font-size: 0.75rem; letter-spacing: 0.05em; line-height: 1.6; }
-        
-        .center-btn-wrapper { display: flex; justify-content: center; width: 100%; margin-top: 20px; }
-
-        .success-icon { width: 80px; height: 80px; background: var(--gradient-success); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; font-size: 40px; color: white; box-shadow: 0 10px 20px rgba(52, 199, 89, 0.3); }
-
-        .survey-header-center { text-align: center; margin-bottom: 30px; }
+        /* Toast */
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; padding: 16px 24px; border-radius: 100px; z-index: 2000; display: none; text-align: center; }
     </style>
 </head>
-<body>
+<body class="bg-slate-950 text-white min-h-[100dvh] relative overflow-x-hidden selection:bg-purple-500/30 font-sans">
 
-<div id="bg-container"></div>
-<div id="bg-overlay"></div>
+    <!-- Background Layers -->
+    <div id="bg-container"></div>
+    
+    <!-- Animated Color Blobs -->
+    <div class="fixed inset-0 w-full h-full overflow-hidden pointer-events-none z-[-2]">
+        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-purple-600 rounded-full mix-blend-screen filter blur-[128px] opacity-60 animate-blob"></div>
+        <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-blue-600 rounded-full mix-blend-screen filter blur-[128px] opacity-60 animate-blob" style="animation-delay: 7s;"></div>
+        <div class="absolute bottom-[-20%] left-[20%] w-96 h-96 bg-fuchsia-600 rounded-full mix-blend-screen filter blur-[128px] opacity-50 animate-blob" style="animation-delay: 14s;"></div>
+    </div>
 
-<div class="app-container">
-    <div class="hero-banner" id="bannerContainer"><img id="bannerImg" src="https://i.imgur.com/HJTTEzA.png" alt="CAB Banner"></div>
+    <!-- Dark Blur Overlay for readability -->
+    <div id="bg-overlay" class="fixed top-0 left-0 w-full h-full z-[-1] bg-black/40 backdrop-blur-sm"></div>
 
-    <div id="surveyView" class="view active">
-        <div class="frosted survey-card">
-            <div class="survey-header-center">
-                <h3 style="margin-top:0; font-size: 1.8rem; letter-spacing: -0.02em;" id="surveyTitle">Event Experience Survey</h3>
-                <p id="surveyDesc" style="color: var(--text-muted); margin: 10px auto; line-height: 1.6; max-width: 90%;">You're the reason we're here. Take 60 seconds to share your thoughts and help us plan the rest of the year!</p>
-                <span style="font-size: 0.7rem; color: #FF3B30; font-weight: 700; text-transform: uppercase;">* Required Field</span>
-            </div>
+    <main class="relative z-10 w-full max-w-7xl mx-auto p-4 sm:p-8 min-h-[100dvh] flex flex-col items-center">
+        
+        <!-- Hero Banner -->
+        <div class="w-full max-w-2xl mx-auto mb-6 glass-card rounded-3xl overflow-hidden shadow-2xl" id="bannerContainer">
+            <img id="bannerImg" src="https://i.imgur.com/HJTTEzA.png" alt="CAB Banner" class="w-full h-auto block object-cover">
+        </div>
 
-            <div class="form-group">
-                <label class="form-label">
-                    <span id="label-studentID">Please enter your Student ID number</span><span class="required-mark">*</span>
-                </label>
-                <input type="number" id="formStudentID" class="control-item" placeholder="Type here..." autocomplete="off" />
-            </div>
+        <!-- SURVEY VIEW -->
+        <div id="surveyView" class="view active w-full max-w-2xl mx-auto">
+            <div class="glass-card rounded-3xl p-6 sm:p-10 mb-10">
+                <div class="text-center mb-8">
+                    <h3 class="text-3xl font-bold mb-3 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70" id="surveyTitle">Event Experience Survey</h3>
+                    <p id="surveyDesc" class="text-white/60 mb-4 font-light text-sm leading-relaxed max-w-lg mx-auto">You're the reason we're here. Take 60 seconds to share your thoughts and help us plan the rest of the year!</p>
+                    <span class="text-[10px] text-red-400 font-bold uppercase tracking-widest">* Required Field</span>
+                </div>
 
-            <div class="form-group">
-                <label class="form-label">
-                    <span id="label-eventSelect">Which Event Would You Like To Survey?</span><span class="required-mark">*</span>
-                </label>
-                <select id="formEvent" class="control-item" onchange="checkEventType()">
-                    <option value="">Select an event...</option>
-                </select>
-            </div>
-
-            <div id="branchCAB">
                 <div class="form-group">
-                    <label class="form-label"><span id="label-cabRating">How would you rate your overall experience at this event?</span><span class="required-mark">*</span></label>
-                    <div class="rating-stars cab-stars">
-                        <span class="star" data-value="1" onclick="setRating(1)">★</span><span class="star" data-value="2" onclick="setRating(2)">★</span><span class="star" data-value="3" onclick="setRating(3)">★</span><span class="star" data-value="4" onclick="setRating(4)">★</span><span class="star" data-value="5" onclick="setRating(5)">★</span>
+                    <label class="form-label">
+                        <span id="label-studentID">Please enter your Student ID number</span><span class="text-red-400 ml-1">*</span>
+                    </label>
+                    <input type="number" id="formStudentID" class="control-item" placeholder="Type here..." autocomplete="off" />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <span id="label-eventSelect">Which Event Would You Like To Survey?</span><span class="text-red-400 ml-1">*</span>
+                    </label>
+                    <select id="formEvent" class="control-item" onchange="checkEventType()">
+                        <option value="">Select an event...</option>
+                    </select>
+                </div>
+
+                <!-- CAB BRANCH -->
+                <div id="branchCAB">
+                    <div class="form-group">
+                        <label class="form-label"><span id="label-cabRating">How would you rate your overall experience at this event?</span><span class="text-red-400 ml-1">*</span></label>
+                        <div class="rating-stars cab-stars">
+                            <span class="star" data-value="1" onclick="setRating(1)">★</span><span class="star" data-value="2" onclick="setRating(2)">★</span><span class="star" data-value="3" onclick="setRating(3)">★</span><span class="star" data-value="4" onclick="setRating(4)">★</span><span class="star" data-value="5" onclick="setRating(5)">★</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><span id="label-cabFirstTime">Was this your first time attending a CAB event?</span><span class="text-red-400 ml-1">*</span></label>
+                        <select id="formFirstTime" class="control-item">
+                            <option value="">Select...</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><span id="label-cabHear">How did you hear about this event?</span><span class="text-red-400 ml-1">*</span></label>
+                        <select id="formHearAbout" class="control-item"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><span id="label-cabFavorite">What was your favorite part of the event?</span><span class="text-red-400 ml-1">*</span></label>
+                        <textarea id="formFavorite" class="control-item" placeholder="Type here..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><span id="label-cabImprove">What would you change or improve for next time?</span><span class="text-red-400 ml-1">*</span></label>
+                        <textarea id="formImprove" class="control-item" placeholder="Type here..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><span id="label-cabLikely">How likely are you to attend a CAB event again?</span><span class="text-red-400 ml-1">*</span></label>
+                        <select id="formLikely" class="control-item">
+                            <option value="">Select...</option>
+                            <option value="Very Likely">Very Likely</option>
+                            <option value="Likely">Likely</option>
+                            <option value="Neutral">Neutral</option>
+                            <option value="Unlikely">Unlikely</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><span id="label-cabStaff">Did any CAB Event Staff take the time to connect with you or talk to you during the event? (If so who?)</span><span class="text-red-400 ml-1">*</span></label>
+                        <textarea id="formStaff" class="control-item" placeholder="Type here..."></textarea>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label"><span id="label-cabFirstTime">Was this your first time attending a CAB event?</span><span class="required-mark">*</span></label>
-                    <select id="formFirstTime" class="control-item">
-                        <option value="">Select...</option>
-                        <option value="Yes">Yes</option>
-                        <option value="No">No</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label"><span id="label-cabHear">How did you hear about this event?</span><span class="required-mark">*</span></label>
-                    <select id="formHearAbout" class="control-item"></select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label"><span id="label-cabFavorite">What was your favorite part of the event?</span><span class="required-mark">*</span></label>
-                    <textarea id="formFavorite" class="control-item" placeholder="Type here..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label"><span id="label-cabImprove">What would you change or improve for next time?</span><span class="required-mark">*</span></label>
-                    <textarea id="formImprove" class="control-item" placeholder="Type here..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label"><span id="label-cabLikely">How likely are you to attend a CAB event again?</span><span class="required-mark">*</span></label>
-                    <select id="formLikely" class="control-item">
-                        <option value="">Select...</option>
-                        <option value="Very Likely">Very Likely</option>
-                        <option value="Likely">Likely</option>
-                        <option value="Neutral">Neutral</option>
-                        <option value="Unlikely">Unlikely</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label"><span id="label-cabStaff">Did any CAB Event Staff take the time to connect with you or talk to you during the event? (If so who?)</span><span class="required-mark">*</span></label>
-                    <textarea id="formStaff" class="control-item" placeholder="Type here..."></textarea>
-                </div>
-            </div>
 
-            <div id="branchMarket" style="display:none;">
-                <div class="form-group">
-                    <label class="form-label"><span id="label-mktRating">How would you rate your overall experience at the Student Market?</span><span class="required-mark">*</span></label>
-                    <div class="rating-stars mkt-stars">
-                        <span class="star" data-value="1" onclick="setRating(1)">★</span><span class="star" data-value="2" onclick="setRating(2)">★</span><span class="star" data-value="3" onclick="setRating(3)">★</span><span class="star" data-value="4" onclick="setRating(4)">★</span><span class="star" data-value="5" onclick="setRating(5)">★</span>
+                <!-- MARKET BRANCH -->
+                <div id="branchMarket" style="display:none;">
+                    <div class="form-group">
+                        <label class="form-label"><span id="label-mktRating">How would you rate your overall experience at the Student Market?</span><span class="text-red-400 ml-1">*</span></label>
+                        <div class="rating-stars mkt-stars">
+                            <span class="star" data-value="1" onclick="setRating(1)">★</span><span class="star" data-value="2" onclick="setRating(2)">★</span><span class="star" data-value="3" onclick="setRating(3)">★</span><span class="star" data-value="4" onclick="setRating(4)">★</span><span class="star" data-value="5" onclick="setRating(5)">★</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><span id="label-mktFavorite">What did you enjoy most about this market?</span><span class="text-red-400 ml-1">*</span></label>
+                        <textarea id="mktFavorite" class="control-item" placeholder="Type here..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><span id="label-mktFirstTime">Was this your first time attending a CAB Student Market?</span><span class="text-red-400 ml-1">*</span></label>
+                        <select id="mktFirstTime" class="control-item">
+                            <option value="">Select...</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><span id="label-mktVariety">How satisfied were you with the variety of vendors?</span><span class="text-red-400 ml-1">*</span></label>
+                        <select id="mktVariety" class="control-item">
+                            <option value="">Select...</option>
+                            <option value="Very Satisfied">Very Satisfied</option>
+                            <option value="Satisfied">Satisfied</option>
+                            <option value="Neutral">Neutral</option>
+                            <option value="Unsatisfied">Unsatisfied</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label"><span id="label-mktPurchase">Did you make a purchase at the market?</span><span class="text-red-400 ml-1">*</span></label>
+                        <select id="mktPurchase" class="control-item">
+                            <option value="">Select...</option>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
                     </div>
                 </div>
+
                 <div class="form-group">
-                    <label class="form-label"><span id="label-mktFavorite">What did you enjoy most about this market?
-</span><span class="required-mark">*</span></label>
-                    <textarea id="mktFavorite" class="control-item" placeholder="Type here..."></textarea>
+                    <label class="form-label" id="label-comments">Additional comments? (Optional)</label>
+                    <textarea id="formComments" class="control-item" placeholder="Type here..."></textarea>
                 </div>
-                <div class="form-group">
-                    <label class="form-label"><span id="label-mktFirstTime">Was this your first time attending a CAB Student Market?</span><span class="required-mark">*</span></label>
-                    <select id="mktFirstTime" class="control-item">
-                        <option value="">Select...</option>
-                        <option value="Yes">Yes</option>
-                        <option value="No">No</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label"><span id="label-mktVariety">How satisfied were you with the variety of vendors?</span><span class="required-mark">*</span></label>
-                    <select id="mktVariety" class="control-item">
-                        <option value="">Select...</option>
-                        <option value="Very Satisfied">Very Satisfied</option>
-                        <option value="Satisfied">Satisfied</option>
-                        <option value="Neutral">Neutral</option>
-                        <option value="Unsatisfied">Unsatisfied</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label"><span id="label-mktPurchase">Did you make a purchase at the market?</span><span class="required-mark">*</span></label>
-                    <select id="mktPurchase" class="control-item">
-                        <option value="">Select...</option>
-                        <option value="Yes">Yes</option>
-                        <option value="No">No</option>
-                    </select>
+
+                <div class="mt-8">
+                    <button class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold py-4 rounded-xl flex justify-center items-center gap-2 transition-all shadow-lg text-lg" id="submitBtn" onclick="submitSurvey()">
+                        <span>Submit Feedback</span>
+                        <div class="loader" id="submitLoader"></div>
+                    </button>
                 </div>
             </div>
+        </div>
 
-            <div class="form-group">
-                <label class="form-label" id="label-comments">Additional comments? (Optional)</label>
-                <textarea id="formComments" class="control-item" placeholder="Type here..."></textarea>
-            </div>
-
-            <div class="center-btn-wrapper">
-                <button class="btn btn-primary" id="submitBtn" onclick="submitSurvey()">
-                    <span>Submit Feedback</span>
-                    <div class="loader" id="submitLoader"></div>
+        <!-- SUCCESS VIEW -->
+        <div id="successView" class="view w-full max-w-2xl mx-auto">
+            <div class="glass-card rounded-3xl p-10 text-center mb-10">
+                <div class="w-20 h-20 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl text-white shadow-[0_0_30px_rgba(168,85,247,0.4)]">
+                    <i data-lucide="check" class="w-10 h-10"></i>
+                </div>
+                <h2 class="text-3xl font-bold mb-3 tracking-tight">Thank You!</h2>
+                <p class="text-white/60 mb-8 leading-relaxed">Your feedback has been successfully submitted.</p>
+                
+                <button class="bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold py-3 px-8 rounded-xl transition-all" onclick="resetFormAndReturn()">
+                    Submit Another Response
                 </button>
             </div>
         </div>
-    </div>
 
-    <div id="successView" class="view">
-        <div class="frosted survey-card" style="text-align: center;">
-            <div class="success-icon">✓</div>
-            <h2 style="margin-top:0">Thank You!</h2>
-            <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 32px;">Your feedback has been successfully submitted.</p>
-            <div class="center-btn-wrapper">
-                <button class="btn btn-primary" onclick="resetFormAndReturn()">Submit Another Response</button>
+        <!-- SETTINGS VIEW (ADMIN) -->
+        <div id="settingsView" class="view w-full max-w-5xl mx-auto">
+            <div class="glass-card rounded-3xl p-6 sm:p-10 mb-10">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                    <h2 class="text-2xl font-bold tracking-tight">Admin Console</h2>
+                    <div class="flex gap-2">
+                        <button class="bg-white/10 hover:bg-white/20 border border-white/10 text-white py-2 px-4 rounded-lg text-sm transition-all" onclick="switchView('dashboard')">Analytics</button>
+                        <button class="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:opacity-90 transition" onclick="switchView('survey')">Exit Admin</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div>
+                        <!-- Event Management -->
+                        <div class="mb-10">
+                            <div class="text-white/50 text-xs font-bold tracking-wider uppercase mb-4 border-b border-white/10 pb-2">Event Management</div>
+                            <div id="event-list-manager" class="flex flex-col max-h-[300px] overflow-y-auto pr-2 mb-4"></div>
+                            
+                            <div class="flex gap-2 bg-white/5 p-3 rounded-2xl border border-white/10 border-dashed">
+                                <input type="text" id="newEventName" class="control-item !mb-0" placeholder="Event Name..." />
+                                <button class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 rounded-xl font-bold hover:opacity-90 transition shadow-lg shrink-0" onclick="addEventUI()">Add</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Global Branding -->
+                        <div class="mb-10">
+                            <div class="text-white/50 text-xs font-bold tracking-wider uppercase mb-4 border-b border-white/10 pb-2">Global Branding</div>
+                            <div class="form-group"><label class="form-label">Banner Image URL</label><input type="text" id="setHeaderImg" class="control-item" /></div>
+                            <div class="form-group"><label class="form-label">Intro Text</label><textarea id="setDesc" class="control-item" style="min-height:80px"></textarea></div>
+                            <div class="form-group"><label class="form-label">New Password</label>
+                                <input type="text" id="setNewPass" class="control-item no-save-pass" placeholder="Change password..." autocomplete="new-password" spellcheck="false" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <!-- Questions (CAB) -->
+                        <div class="mb-10">
+                            <div class="text-white/50 text-xs font-bold tracking-wider uppercase mb-4 border-b border-white/10 pb-2">Question Editor (CAB)</div>
+                            <div class="form-group"><label class="form-label">Student ID Question</label><input type="text" id="q-studentID" class="control-item" /></div>
+                            <div class="form-group"><label class="form-label">Event Selection Title</label><input type="text" id="q-eventSelect" class="control-item" /></div>
+                            <div class="form-group"><label class="form-label">CAB Experience Rating</label><input type="text" id="q-cabRating" class="control-item" /></div>
+                            <div class="form-group"><label class="form-label">First Time Label</label><input type="text" id="q-cabFirstTime" class="control-item" /></div>
+                            <div class="form-group"><label class="form-label">Hear About Label</label><input type="text" id="q-cabHear" class="control-item" /></div>
+                            <div class="form-group"><label class="form-label">Favorite Part Label</label><input type="text" id="q-cabFavorite" class="control-item" /></div>
+                            <div class="form-group"><label class="form-label">Improvements Label</label><input type="text" id="q-cabImprove" class="control-item" /></div>
+                            <div class="form-group"><label class="form-label">Attend Again Label</label><input type="text" id="q-cabLikely" class="control-item" /></div>
+                            <div class="form-group"><label class="form-label">Staff Connect Label</label><input type="text" id="q-cabStaff" class="control-item" /></div>
+                        </div>
+
+                        <!-- Questions (Market) -->
+                        <div class="mb-10">
+                            <div class="text-white/50 text-xs font-bold tracking-wider uppercase mb-4 border-b border-white/10 pb-2">Question Editor (Market)</div>
+                            <div class="form-group"><label class="form-label">Market Experience Rating</label><input type="text" id="q-mktRating" class="control-item" /></div>
+                            <div class="form-group"><label class="form-label">Market Favorite Part</label><input type="text" id="q-mktFavorite" class="control-item" /></div>
+                            <div class="form-group"><label class="form-label">First Time Label</label><input type="text" id="q-mktFirstTime" class="control-item" /></div>
+                            <div class="form-group"><label class="form-label">Vendor Variety Label</label><input type="text" id="q-mktVariety" class="control-item" /></div>
+                            <div class="form-group"><label class="form-label">Market Purchase Label</label><input type="text" id="q-mktPurchase" class="control-item" /></div>
+                            <div class="form-group"><label class="form-label">Global Comments Label</label><input type="text" id="q-comments" class="control-item" /></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4 pt-8 border-t border-white/10">
+                    <button class="w-full sm:w-auto px-10 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold py-4 rounded-xl flex justify-center items-center gap-2 transition-all shadow-lg mx-auto" id="saveConfigBtn" onclick="saveAdminSettings()">
+                        <span>Save All Changes</span>
+                        <div class="loader" id="saveLoader"></div>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="settingsView" class="view">
-        <div class="frosted survey-card" style="max-width: 1100px;">
-            <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;">
-                <h2 style="margin:0">Admin Console</h2>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <button class="btn btn-ghost" style="padding: 10px 16px; font-size: 0.8rem; width: auto;" onclick="switchView('dashboard')">Analytics</button>
-                    <button class="btn btn-ghost" style="padding: 10px 16px; font-size: 0.8rem; width: auto;" onclick="switchView('survey')">Exit Admin</button>
-                </div>
-            </div>
-
-            <div class="settings-grid">
-                <div>
-                    <div class="settings-section">
-                        <div class="settings-title">Event Management (Reorder & Market Toggle)</div>
-                        <div id="event-list-manager" class="list-manager"></div>
-                        <div style="display:flex; gap:8px; margin-top:16px;">
-                            <input type="text" id="newEventName" class="control-item" placeholder="Event Name..." />
-                            <button class="btn btn-primary" style="width: auto; padding: 0 20px;" onclick="addEventUI()">Add</button>
-                        </div>
-                    </div>
-                    
-                    <div class="settings-section">
-                        <div class="settings-title">Global Branding</div>
-                        <div class="form-group"><label class="form-label">Banner Image URL</label><input type="text" id="setHeaderImg" class="control-item" /></div>
-                        <div class="form-group"><label class="form-label">Intro Text</label><textarea id="setDesc" class="control-item" style="min-height:80px"></textarea></div>
-                        <div class="form-group"><label class="form-label">New Password</label>
-                            <input type="text" id="setNewPass" class="control-item no-save-pass" placeholder="Change password..." autocomplete="new-password" spellcheck="false" />
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="settings-section">
-                        <div class="settings-title">Question Editor (CAB)</div>
-                        <div class="form-group"><label class="form-label">Student ID Question</label><input type="text" id="q-studentID" class="control-item" /></div>
-                        <div class="form-group"><label class="form-label">Event Selection Title</label><input type="text" id="q-eventSelect" class="control-item" /></div>
-                        <div class="form-group"><label class="form-label">CAB Experience Rating</label><input type="text" id="q-cabRating" class="control-item" /></div>
-                        <div class="form-group"><label class="form-label">First Time Label</label><input type="text" id="q-cabFirstTime" class="control-item" /></div>
-                        <div class="form-group"><label class="form-label">Hear About Label</label><input type="text" id="q-cabHear" class="control-item" /></div>
-                        <div class="form-group"><label class="form-label">Favorite Part Label</label><input type="text" id="q-cabFavorite" class="control-item" /></div>
-                        <div class="form-group"><label class="form-label">Improvements Label</label><input type="text" id="q-cabImprove" class="control-item" /></div>
-                        <div class="form-group"><label class="form-label">Attend Again Label</label><input type="text" id="q-cabLikely" class="control-item" /></div>
-                        <div class="form-group"><label class="form-label">Staff Connect Label</label><input type="text" id="q-cabStaff" class="control-item" /></div>
-                    </div>
-
-                    <div class="settings-section">
-                        <div class="settings-title">Question Editor (Market)</div>
-                        <div class="form-group"><label class="form-label">Market Experience Rating</label><input type="text" id="q-mktRating" class="control-item" /></div>
-                        <div class="form-group"><label class="form-label">Market Favorite Part</label><input type="text" id="q-mktFavorite" class="control-item" /></div>
-                        <div class="form-group"><label class="form-label">First Time Label</label><input type="text" id="q-mktFirstTime" class="control-item" /></div>
-                        <div class="form-group"><label class="form-label">Vendor Variety Label</label><input type="text" id="q-mktVariety" class="control-item" /></div>
-                        <div class="form-group"><label class="form-label">Market Purchase Label</label><input type="text" id="q-mktPurchase" class="control-item" /></div>
-                        <div class="form-group"><label class="form-label">Global Comments Label</label><input type="text" id="q-comments" class="control-item" /></div>
-                    </div>
+        <!-- DASHBOARD VIEW -->
+        <div id="dashboardView" class="view w-full max-w-7xl mx-auto">
+            <div class="flex flex-col sm:flex-row gap-4 mb-8 glass-card p-4 rounded-2xl">
+                <input id="search" class="control-item !mb-0 flex-1" type="text" placeholder="Search events..." />
+                <div class="flex gap-2">
+                    <button onclick="syncSheetData()" class="bg-white/10 hover:bg-white/20 border border-white/10 text-white py-3 px-6 rounded-xl text-sm transition-all flex items-center gap-2"><i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh</button>
+                    <button onclick="switchView('settings')" class="bg-white/10 hover:bg-white/20 border border-white/10 text-white py-3 px-6 rounded-xl text-sm transition-all flex items-center gap-2"><i data-lucide="settings" class="w-4 h-4"></i> Settings</button>
+                    <button onclick="switchView('survey')" class="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-6 rounded-xl text-sm font-medium hover:opacity-90 transition">Survey View</button>
                 </div>
             </div>
             
-            <div class="center-btn-wrapper">
-                <button class="btn btn-primary" id="saveConfigBtn" onclick="saveAdminSettings()">
-                    <span>Save All Changes</span>
-                    <div class="loader" id="saveLoader"></div>
-                </button>
+            <div id="dashboard" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10"></div>
+        </div>
+
+        <!-- Global Footer -->
+        <footer class="mt-auto py-8 text-center text-white/40 text-xs tracking-wider flex flex-col items-center gap-2 w-full">
+            <span>© <span id="year"></span> Canyon Activities Board</span>
+            <button id="adminLoginBtn" class="opacity-50 hover:opacity-100 transition-opacity uppercase tracking-widest mt-2 bg-transparent border-none text-[10px] cursor-pointer" onclick="showGate()">Admin Access</button>
+        </footer>
+
+    </main>
+
+    <!-- Admin Login Modal -->
+    <div id="gateModal" class="fixed inset-0 z-[1000] hidden items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-md" onclick="hideGate()"></div>
+        <!-- Modal Content -->
+        <div class="relative w-full max-w-sm glass-card rounded-3xl p-8 flex flex-col items-center text-center shadow-2xl">
+            <div class="w-16 h-16 bg-white/10 rounded-2xl p-3 mb-4 flex items-center justify-center border border-white/10">
+                <i data-lucide="lock" class="w-8 h-8 text-white/80"></i>
             </div>
+            <h3 class="text-2xl font-bold mb-1">Authorization Required</h3>
+            <p class="text-white/50 text-sm mb-6">Enter board password to continue.</p>
+            
+            <input type="password" id="adminPass" class="control-item text-center mb-6 no-save-pass" placeholder="Password" autocomplete="off" spellcheck="false" onkeyup="if(event.key==='Enter') verifyAdmin()"/>
+            
+            <button class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 rounded-xl flex justify-center items-center gap-2 transition-all" id="gateBtn" onclick="verifyAdmin()">
+                <span>Authorize & Login</span>
+                <div class="loader" id="gateLoader"></div>
+            </button>
         </div>
     </div>
 
-    <div id="dashboardView" class="view">
-        <div style="margin-bottom: 40px; display:flex; flex-direction: column; gap: 12px;">
-            <input id="search" class="control-item" type="text" placeholder="Search events..." />
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <button onclick="syncSheetData()" class="btn btn-ghost" style="flex: 1; min-width: 120px;">🔄 Refresh</button>
-                <button onclick="switchView('settings')" class="btn btn-ghost" style="flex: 1; min-width: 120px;">⚙️ Settings</button>
-                <button onclick="switchView('survey')" class="btn btn-ghost" style="flex: 1; min-width: 120px;">Survey View</button>
-            </div>
-        </div>
-        <div id="dashboard"></div>
-    </div>
-
-    <footer>
-        © 2026 Canyon Activities Board <br>
-        <button class="btn btn-ghost" id="adminLoginBtn" style="font-size:0.7rem; opacity:0.4; width: auto; margin-top:10px; border:none;" onclick="showGate()">Admin Access</button>
-    </footer>
-</div>
-
-<div id="gateModal" class="modal"><div class="modal-bg" onclick="hideGate()"></div>
-    <div class="modal-content"><h3 style="margin-top:0">Authorization Required</h3><p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">Enter board password to continue.</p>
-        <input type="text" id="adminPass" class="control-item no-save-pass" placeholder="Password" style="margin-bottom:20px" autocomplete="off" spellcheck="false" onkeyup="if(event.key==='Enter') verifyAdmin()"/>
-        <button class="btn btn-primary" id="gateBtn" onclick="verifyAdmin()"><span>Authorize & Login</span><div class="loader" id="gateLoader"></div></button>
-    </div>
-</div>
-
-<div id="toast">Update Successful</div>
+    <!-- Toast Notification -->
+    <div id="toast" class="glass-card !bg-purple-600/90 text-white font-bold">Update Successful</div>
 
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3QFydA5aCuJFFKw2A7oBEJ9G9IBoysQOGfS7XVooXJ-F23vqbfl5_LMpt1UbCERI/exec"; 
@@ -398,13 +393,32 @@
     let bgIndex = 0;
     let bgInterval = null;
 
-    async function init() { switchView('survey'); syncSheetData(); }
+    // Security Helper
+    function escapeHTML(str) {
+        if (!str) return '';
+        return str.toString().replace(/[&<>'"]/g, tag => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+        }[tag] || tag));
+    }
+
+    async function init() { 
+        document.getElementById('year').textContent = new Date().getFullYear();
+        lucide.createIcons();
+        switchView('survey'); 
+        syncSheetData(); 
+    }
 
     function switchView(viewName) {
         state.view = viewName;
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.view').forEach(v => {
+            v.classList.remove('active');
+            v.style.display = 'none'; // Ensure Tailwind handles display flex/block
+        });
         const target = document.getElementById(viewName + 'View');
-        if (target) target.classList.add('active');
+        if (target) {
+            target.style.display = 'block';
+            setTimeout(() => target.classList.add('active'), 10); // Trigger transition
+        }
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -418,7 +432,7 @@
             const mkt = (state.config.MarketEvents || "").split(',').map(s => s.trim()).filter(Boolean);
             state.tempEvents = all.map(name => ({ name, isMarket: mkt.includes(name) }));
             applyConfig();
-            // initBackgroundRotation(); // Disabled to keep background clean per user request
+            initBackgroundRotation(); // Uses the dynamic #bg-container layer
             if (state.view === 'dashboard') renderDashboard();
         } catch (e) { console.error("Sync error", e); }
     }
@@ -467,9 +481,9 @@
             if (val && labelEl) labelEl.textContent = val;
             if (inputEl) inputEl.value = val || (labelEl ? labelEl.textContent : "");
         });
-        document.getElementById('formEvent').innerHTML = '<option value="">Select an event...</option>' + state.tempEvents.map(e => `<option value="${e.name}">${e.name}</option>`).join('');
+        document.getElementById('formEvent').innerHTML = '<option value="">Select an event...</option>' + state.tempEvents.map(e => `<option value="${escapeHTML(e.name)}">${escapeHTML(e.name)}</option>`).join('');
         const hear = (state.config.HearAboutOptions || "Instagram,Email,Flyer,LopeLife App,Word of Mouth").split(',');
-        document.getElementById('formHearAbout').innerHTML = '<option value="">Select...</option>' + hear.map(h => `<option value="${h.trim()}">${h.trim()}</option>`).join('');
+        document.getElementById('formHearAbout').innerHTML = '<option value="">Select...</option>' + hear.map(h => `<option value="${escapeHTML(h.trim())}">${escapeHTML(h.trim())}</option>`).join('');
         document.getElementById('setHeaderImg').value = state.config.HeaderImageURL || "";
         document.getElementById('setDesc').value = state.config.SurveyDescription || "";
         renderEventSettings();
@@ -478,18 +492,21 @@
     function renderEventSettings() {
         const box = document.getElementById('event-list-manager');
         box.innerHTML = state.tempEvents.map((ev, idx) => `
-            <div class="list-row">
-                <div class="move-controls">
-                    <button class="move-btn" onclick="moveEvent(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>↑</button>
-                    <button class="move-btn" onclick="moveEvent(${idx}, 1)" ${idx === state.tempEvents.length - 1 ? 'disabled' : ''}>↓</button>
+            <div class="flex items-center bg-white/5 p-2 rounded-xl border border-white/10 gap-3 mb-2">
+                <div class="flex gap-1 shrink-0">
+                    <button class="bg-white/10 hover:bg-white/20 text-white p-1.5 rounded-lg transition disabled:opacity-30" onclick="moveEvent(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}><i data-lucide="chevron-up" class="w-3.5 h-3.5"></i></button>
+                    <button class="bg-white/10 hover:bg-white/20 text-white p-1.5 rounded-lg transition disabled:opacity-30" onclick="moveEvent(${idx}, 1)" ${idx === state.tempEvents.length - 1 ? 'disabled' : ''}><i data-lucide="chevron-down" class="w-3.5 h-3.5"></i></button>
                 </div>
-                <span class="list-name">${ev.name}</span>
-                <label class="market-toggle" style="font-size: 0.75rem; color: var(--text-muted);">
-                    <input type="checkbox" ${ev.isMarket ? 'checked' : ''} onchange="toggleMarketFlag(${idx}, this.checked)"> Market
+                <span class="flex-1 text-sm text-white/90 truncate">${escapeHTML(ev.name)}</span>
+                <label class="flex items-center gap-2 text-xs text-white/50 cursor-pointer shrink-0">
+                    <input type="checkbox" class="accent-purple-500 w-4 h-4 rounded" ${ev.isMarket ? 'checked' : ''} onchange="toggleMarketFlag(${idx}, this.checked)"> Market
                 </label>
-                <div class="list-remove" onclick="removeEventUI(${idx})">&times;</div>
+                <button class="text-red-400 hover:text-red-300 p-2 transition shrink-0" onclick="removeEventUI(${idx})" title="Delete">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
             </div>
         `).join('');
+        lucide.createIcons();
     }
 
     function moveEvent(index, direction) {
@@ -516,7 +533,12 @@
         state.currentRating = 0; document.querySelectorAll('.star').forEach(s => s.classList.remove('selected'));
     }
 
-    function setRating(val) { state.currentRating = val; const stars = state.isMarket ? document.querySelectorAll('.mkt-stars .star') : document.querySelectorAll('.cab-stars .star'); document.querySelectorAll('.star').forEach(s => s.classList.remove('selected')); stars.forEach((s, i) => { if(i < val) s.classList.add('selected'); }); }
+    function setRating(val) { 
+        state.currentRating = val; 
+        const stars = state.isMarket ? document.querySelectorAll('.mkt-stars .star') : document.querySelectorAll('.cab-stars .star'); 
+        document.querySelectorAll('.star').forEach(s => s.classList.remove('selected')); 
+        stars.forEach((s, i) => { if(i < val) s.classList.add('selected'); }); 
+    }
 
     function resetFormAndReturn() {
         state.currentRating = 0; state.isMarket = false;
@@ -569,8 +591,18 @@
         fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) }).catch(e => console.error(e));
     }
 
-    function showGate() { document.getElementById('gateModal').classList.add('show'); }
-    function hideGate() { document.getElementById('gateModal').classList.remove('show'); document.getElementById('adminPass').value = ""; }
+    function showGate() { 
+        const modal = document.getElementById('gateModal');
+        modal.style.display = 'flex'; 
+        modal.classList.remove('hidden');
+    }
+    
+    function hideGate() { 
+        const modal = document.getElementById('gateModal');
+        modal.style.display = 'none'; 
+        modal.classList.add('hidden');
+        document.getElementById('adminPass').value = ""; 
+    }
 
     async function verifyAdmin() {
         const pass = document.getElementById('adminPass').value;
@@ -604,21 +636,23 @@
     function renderDashboard() {
         const dash = document.getElementById('dashboard'); dash.innerHTML = "";
         state.responses.forEach(g => {
-            const card = document.createElement('div'); card.className = "frosted card";
+            const card = document.createElement('div'); 
+            card.className = "glass-card rounded-2xl overflow-hidden flex flex-col transition-transform hover:-translate-y-2";
             const imgId = Math.abs((g.eventname||"").split('').reduce((a,b)=>a+b.charCodeAt(0),0)) % 1000;
             const img = g.imageurl || `https://picsum.photos/seed/${imgId}/600/400`;
-            card.innerHTML = `<div class="card-header"><img src="${img}" class="card-img"></div>
-                <div class="card-body">
-                    <h3 style="margin:0 0 12px 0">${g.eventname}</h3>
-                    <div style="margin-bottom:12px">
-                        <span class="badge" style="background:var(--gradient-accent)">★ ${Number(g.rating || 0).toFixed(1)}</span>
-                        <span class="badge">${g.surveys || 0} Surveys</span>
+            card.innerHTML = `
+                <div class="relative h-40 border-b border-white/10"><img src="${img}" class="w-full h-full object-cover"></div>
+                <div class="p-6 flex flex-col flex-1">
+                    <h3 class="text-xl font-bold mb-3">${escapeHTML(g.eventname)}</h3>
+                    <div class="flex gap-2 mb-4">
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-bold uppercase bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg">★ ${Number(g.rating || 0).toFixed(1)}</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-bold uppercase bg-white/10 text-white border border-white/10">${g.surveys || 0} Surveys</span>
                     </div>
-                    <div style="font-size:0.7rem; color:var(--text-muted); margin-bottom:15px; display:flex; flex-wrap:wrap; gap:8px;">
-                        <span>👤 Attendance: ${g.attendance || "N/A"}</span>
-                        <span>🏷️ Team: ${g.hostingteam || "CAB"}</span>
+                    <div class="text-xs text-white/60 mb-4 flex flex-wrap gap-2">
+                        <span class="bg-black/30 border border-white/5 px-2 py-1 rounded-md">👤 ${escapeHTML(g.attendance) || "N/A"}</span>
+                        <span class="bg-black/30 border border-white/5 px-2 py-1 rounded-md">🏷️ ${escapeHTML(g.hostingteam) || "CAB"}</span>
                     </div>
-                    <p style="font-size:0.9rem; color:#b0b0b0; line-height:1.6;">${g.summary || "Henry AI summary pending..."}</p>
+                    <p class="text-sm text-white/50 leading-relaxed line-clamp-3">${escapeHTML(g.summary) || "Henry AI summary pending..."}</p>
                 </div>`;
             dash.appendChild(card);
         });
@@ -627,10 +661,17 @@
     function showToast(msg, isError = false) { 
         const t = document.getElementById('toast'); 
         t.textContent = msg; 
-        t.style.background = isError ? 'var(--gradient-fire)' : 'var(--gradient-success)';
+        if(isError) {
+            t.classList.remove('!bg-purple-600/90');
+            t.classList.add('!bg-red-600/90');
+        } else {
+            t.classList.remove('!bg-red-600/90');
+            t.classList.add('!bg-purple-600/90');
+        }
         t.style.display = 'block'; 
         setTimeout(() => t.style.display = 'none', 3500); 
     }
+    
     window.onload = init;
 </script>
 </body>
