@@ -14,7 +14,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -24,13 +24,10 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['Outfit', 'sans-serif'] },
-                    animation: { 'blob': 'blob 20s infinite ease-in-out' },
-                    keyframes: {
-                        blob: {
-                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(40vw, 30vh) scale(1.2)' },
-                            '66%': { transform: 'translate(-30vw, 20vh) scale(0.8)' },
-                            '100%': { transform: 'translate(0px, 0px) scale(1)' }
+                    colors: {
+                        zinc: {
+                            900: '#18181b',
+                            950: '#09090b',
                         }
                     }
                 }
@@ -43,100 +40,115 @@
 
         /* Custom scrollbar */
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 1); }
-        ::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.5); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.8); }
+        ::-webkit-scrollbar-track { background: #09090b; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #71717a; }
 
         /* Security Input */
         .no-save-pass { -webkit-text-security: disc !important; text-security: disc !important; }
 
-        /* Glassmorphism utilities */
+        /* Dark Theme Cards (Screenshot Match) */
         .glass-card {
-            background: rgba(0, 0, 0, 0.55);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+            background: rgba(9, 9, 11, 0.65);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .survey-card {
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.05);
         }
 
         /* View Switching Logic */
         .view { display: none; opacity: 0; transform: translateY(15px); transition: 0.4s ease; }
         .view.active { display: block; opacity: 1; transform: translateY(0); }
 
-        /* Dynamic Backgrounds */
-        #bg-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -3; background: #000; }
-        .bg-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 2s ease-in-out; }
-        .bg-slide.active { opacity: 0.5; }
-
         /* Input Controls */
         .control-item {
-            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
-            color: white; border-radius: 0.75rem; padding: 1rem 1.25rem; font-family: inherit; font-size: 1rem;
-            outline: none; transition: all 0.3s ease;
+            width: 100%; 
+            background: #18181b; 
+            border: 1px solid #27272a; 
+            color: #ffffff; 
+            border-radius: 0.75rem; 
+            padding: 1rem 1.25rem; 
+            font-family: inherit; 
+            font-size: 1rem;
+            outline: none; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .control-item:focus { border-color: rgba(168, 85, 247, 0.5); background: rgba(255,255,255,0.1); box-shadow: 0 0 15px rgba(168, 85, 247, 0.2); }
+        .control-item:hover {
+            border-color: rgba(168, 85, 247, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+        .control-item::placeholder { color: rgba(255, 255, 255, 0.5); }
+        .control-item:focus { 
+            border-color: #a855f7; 
+            background: #27272a; 
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.15); 
+            transform: translateY(-2px);
+        }
         
-        select.control-item { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 16px; padding-right: 2.5rem; }
+        select.control-item { 
+            appearance: none; 
+            -webkit-appearance: none; 
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); 
+            background-repeat: no-repeat; 
+            background-position: right 1rem center; 
+            background-size: 16px; 
+            padding-right: 2.5rem; 
+        }
+        select.control-item option { background: #18181b; color: white; }
+        
         textarea.control-item { min-height: 120px; resize: vertical; }
 
         /* Form Labels */
-        .form-label { display: block; margin-bottom: 0.75rem; color: rgba(255,255,255,0.5); font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.4; }
+        .form-label { display: block; margin-bottom: 0.75rem; color: #ffffff; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.4; }
         .form-group { margin-bottom: 1.75rem; }
 
         /* Star Ratings */
         .rating-stars { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-        .star { font-size: 2.8rem; cursor: pointer; color: rgba(255,255,255,0.15); transition: 0.2s; }
-        .star.selected { color: #eab308; filter: drop-shadow(0 0 10px rgba(234,179,8,0.3)); }
+        .star { font-size: 2.8rem; cursor: pointer; color: #27272a; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .star:hover { transform: scale(1.25) translateY(-4px); color: rgba(234, 179, 8, 0.6); }
+        .star.selected { color: #eab308; filter: drop-shadow(0 0 10px rgba(234,179,8,0.3)); transform: scale(1.1); }
 
         /* Loaders */
         .loader { display: none; width: 18px; height: 18px; border: 2px solid #fff; border-bottom-color: transparent; border-radius: 50%; animation: rotation 1s linear infinite; margin-left: 10px; }
         @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* Toast */
-        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; padding: 16px 24px; border-radius: 100px; z-index: 2000; display: none; text-align: center; }
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; padding: 16px 24px; border-radius: 100px; z-index: 2000; display: none; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
     </style>
 </head>
-<body class="bg-slate-950 text-white min-h-[100dvh] relative overflow-x-hidden selection:bg-purple-500/30 font-sans">
+<body class="text-zinc-100 min-h-[100dvh] relative overflow-x-hidden selection:bg-purple-500/30 font-sans" style="background-image: url('https://i.imgur.com/IMiv0pU.jpeg'); background-size: cover; background-position: center; background-attachment: fixed;">
 
-    <!-- Background Layers -->
-    <div id="bg-container"></div>
-    
-    <!-- Animated Color Blobs -->
-    <div class="fixed inset-0 w-full h-full overflow-hidden pointer-events-none z-[-2]">
-        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-purple-600 rounded-full mix-blend-screen filter blur-[128px] opacity-60 animate-blob"></div>
-        <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-blue-600 rounded-full mix-blend-screen filter blur-[128px] opacity-60 animate-blob" style="animation-delay: 7s;"></div>
-        <div class="absolute bottom-[-20%] left-[20%] w-96 h-96 bg-fuchsia-600 rounded-full mix-blend-screen filter blur-[128px] opacity-50 animate-blob" style="animation-delay: 14s;"></div>
-    </div>
-
-    <!-- Dark Blur Overlay for readability -->
-    <div id="bg-overlay" class="fixed top-0 left-0 w-full h-full z-[-1] bg-black/40 backdrop-blur-sm"></div>
+    <!-- Dark Overlay for readability (lightened to make background brighter) -->
+    <div class="fixed inset-0 bg-zinc-950/30 z-[-1]"></div>
 
     <main class="relative z-10 w-full max-w-7xl mx-auto p-4 sm:p-8 min-h-[100dvh] flex flex-col items-center">
         
-        <!-- Hero Banner -->
-        <div class="w-full max-w-2xl mx-auto mb-6 glass-card rounded-3xl overflow-hidden shadow-2xl hidden" id="bannerContainer">
-            <img id="bannerImg" src="" alt="CAB Banner" class="w-full h-auto block object-cover">
-        </div>
-
         <!-- SURVEY VIEW -->
         <div id="surveyView" class="view active w-full max-w-2xl mx-auto">
-            <div class="glass-card rounded-3xl p-6 sm:p-10 mb-10">
-                <div class="text-center mb-8">
-                    <h3 class="text-3xl font-bold mb-3 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-white/70" id="surveyTitle">Event Experience Survey</h3>
-                    <p id="surveyDesc" class="text-white/60 mb-4 font-light text-sm leading-relaxed max-w-lg mx-auto">You're the reason we're here. Take 60 seconds to share your thoughts and help us plan the rest of the year!</p>
-                    <span class="text-[10px] text-red-400 font-bold uppercase tracking-widest">* Required Field</span>
+            <div class="glass-card survey-card rounded-3xl p-6 sm:p-10 mb-10 transition-transform duration-500 hover:shadow-[0_0_40px_rgba(168,85,247,0.15)] hover:-translate-y-1">
+                <div class="text-center mb-10">
+                    <img src="https://i.imgur.com/p2qZOL5.png" alt="CAB Logo" class="h-20 sm:h-24 w-auto mx-auto mb-6 object-contain transition-all duration-500 hover:scale-110 hover:rotate-2 hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" />
+                    <h3 class="text-3xl sm:text-4xl font-extrabold mb-3 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500" id="surveyTitle">Event Experience Survey</h3>
+                    <p id="surveyDesc" class="text-white mb-5 font-medium text-sm leading-relaxed max-w-lg mx-auto">You're the reason we're here. Take 60 seconds to share your thoughts and help us plan the rest of the year!</p>
+                    <span class="inline-block bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-widest">* Required Field</span>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">
-                        <span id="label-studentID">Please enter your Student ID number</span><span class="text-red-400 ml-1">*</span>
+                        <span id="label-studentID">Please enter your Student ID number</span><span class="text-rose-500 ml-1">*</span>
                     </label>
                     <input type="number" id="formStudentID" class="control-item" placeholder="Type here..." autocomplete="off" />
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">
-                        <span id="label-eventSelect">Which Event Would You Like To Survey?</span><span class="text-red-400 ml-1">*</span>
+                        <span id="label-eventSelect">Which Event Would You Like To Survey?</span><span class="text-rose-500 ml-1">*</span>
                     </label>
                     <select id="formEvent" class="control-item" onchange="checkEventType()">
                         <option value="">Select an event...</option>
@@ -146,13 +158,13 @@
                 <!-- CAB BRANCH -->
                 <div id="branchCAB">
                     <div class="form-group">
-                        <label class="form-label"><span id="label-cabRating">How would you rate your overall experience at this event?</span><span class="text-red-400 ml-1">*</span></label>
+                        <label class="form-label"><span id="label-cabRating">How would you rate your overall experience at this event?</span><span class="text-rose-500 ml-1">*</span></label>
                         <div class="rating-stars cab-stars">
                             <span class="star" data-value="1" onclick="setRating(1)">★</span><span class="star" data-value="2" onclick="setRating(2)">★</span><span class="star" data-value="3" onclick="setRating(3)">★</span><span class="star" data-value="4" onclick="setRating(4)">★</span><span class="star" data-value="5" onclick="setRating(5)">★</span>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label"><span id="label-cabFirstTime">Was this your first time attending a CAB event?</span><span class="text-red-400 ml-1">*</span></label>
+                        <label class="form-label"><span id="label-cabFirstTime">Was this your first time attending a CAB event?</span><span class="text-rose-500 ml-1">*</span></label>
                         <select id="formFirstTime" class="control-item">
                             <option value="">Select...</option>
                             <option value="Yes">Yes</option>
@@ -160,19 +172,19 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label"><span id="label-cabHear">How did you hear about this event?</span><span class="text-red-400 ml-1">*</span></label>
+                        <label class="form-label"><span id="label-cabHear">How did you hear about this event?</span><span class="text-rose-500 ml-1">*</span></label>
                         <select id="formHearAbout" class="control-item"></select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label"><span id="label-cabFavorite">What was your favorite part of the event?</span><span class="text-red-400 ml-1">*</span></label>
+                        <label class="form-label"><span id="label-cabFavorite">What was your favorite part of the event?</span><span class="text-rose-500 ml-1">*</span></label>
                         <textarea id="formFavorite" class="control-item" placeholder="Type here..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label class="form-label"><span id="label-cabImprove">What would you change or improve for next time?</span><span class="text-red-400 ml-1">*</span></label>
+                        <label class="form-label"><span id="label-cabImprove">What would you change or improve for next time?</span><span class="text-rose-500 ml-1">*</span></label>
                         <textarea id="formImprove" class="control-item" placeholder="Type here..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label class="form-label"><span id="label-cabLikely">How likely are you to attend a CAB event again?</span><span class="text-red-400 ml-1">*</span></label>
+                        <label class="form-label"><span id="label-cabLikely">How likely are you to attend a CAB event again?</span><span class="text-rose-500 ml-1">*</span></label>
                         <select id="formLikely" class="control-item">
                             <option value="">Select...</option>
                             <option value="Very Likely">Very Likely</option>
@@ -182,7 +194,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label"><span id="label-cabStaff">Did any CAB Event Staff take the time to connect with you or talk to you during the event? (If so who?)</span><span class="text-red-400 ml-1">*</span></label>
+                        <label class="form-label"><span id="label-cabStaff">Did any CAB Event Staff take the time to connect with you or talk to you during the event? (If so who?)</span><span class="text-rose-500 ml-1">*</span></label>
                         <textarea id="formStaff" class="control-item" placeholder="Type here..."></textarea>
                     </div>
                 </div>
@@ -190,17 +202,17 @@
                 <!-- MARKET BRANCH -->
                 <div id="branchMarket" style="display:none;">
                     <div class="form-group">
-                        <label class="form-label"><span id="label-mktRating">How would you rate your overall experience at the Student Market?</span><span class="text-red-400 ml-1">*</span></label>
+                        <label class="form-label"><span id="label-mktRating">How would you rate your overall experience at the Student Market?</span><span class="text-rose-500 ml-1">*</span></label>
                         <div class="rating-stars mkt-stars">
                             <span class="star" data-value="1" onclick="setRating(1)">★</span><span class="star" data-value="2" onclick="setRating(2)">★</span><span class="star" data-value="3" onclick="setRating(3)">★</span><span class="star" data-value="4" onclick="setRating(4)">★</span><span class="star" data-value="5" onclick="setRating(5)">★</span>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label"><span id="label-mktFavorite">What did you enjoy most about this market?</span><span class="text-red-400 ml-1">*</span></label>
+                        <label class="form-label"><span id="label-mktFavorite">What did you enjoy most about this market?</span><span class="text-rose-500 ml-1">*</span></label>
                         <textarea id="mktFavorite" class="control-item" placeholder="Type here..."></textarea>
                     </div>
                     <div class="form-group">
-                        <label class="form-label"><span id="label-mktFirstTime">Was this your first time attending a CAB Student Market?</span><span class="text-red-400 ml-1">*</span></label>
+                        <label class="form-label"><span id="label-mktFirstTime">Was this your first time attending a CAB Student Market?</span><span class="text-rose-500 ml-1">*</span></label>
                         <select id="mktFirstTime" class="control-item">
                             <option value="">Select...</option>
                             <option value="Yes">Yes</option>
@@ -208,7 +220,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label"><span id="label-mktVariety">How satisfied were you with the variety of vendors?</span><span class="text-red-400 ml-1">*</span></label>
+                        <label class="form-label"><span id="label-mktVariety">How satisfied were you with the variety of vendors?</span><span class="text-rose-500 ml-1">*</span></label>
                         <select id="mktVariety" class="control-item">
                             <option value="">Select...</option>
                             <option value="Very Satisfied">Very Satisfied</option>
@@ -218,7 +230,7 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label"><span id="label-mktPurchase">Did you make a purchase at the market?</span><span class="text-red-400 ml-1">*</span></label>
+                        <label class="form-label"><span id="label-mktPurchase">Did you make a purchase at the market?</span><span class="text-rose-500 ml-1">*</span></label>
                         <select id="mktPurchase" class="control-item">
                             <option value="">Select...</option>
                             <option value="Yes">Yes</option>
@@ -232,8 +244,8 @@
                     <textarea id="formComments" class="control-item" placeholder="Type here..."></textarea>
                 </div>
 
-                <div class="mt-8">
-                    <button class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold py-4 rounded-xl flex justify-center items-center gap-2 transition-all shadow-lg text-lg" id="submitBtn" onclick="submitSurvey()">
+                <div class="mt-8 pt-6 border-t border-zinc-800">
+                    <button class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-4 rounded-xl flex justify-center items-center gap-2 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] text-lg border border-purple-500/50" id="submitBtn" onclick="submitSurvey()">
                         <span>Submit Feedback</span>
                         <div class="loader" id="submitLoader"></div>
                     </button>
@@ -244,13 +256,13 @@
         <!-- SUCCESS VIEW -->
         <div id="successView" class="view w-full max-w-2xl mx-auto">
             <div class="glass-card rounded-3xl p-10 text-center mb-10">
-                <div class="w-20 h-20 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl text-white shadow-[0_0_30px_rgba(168,85,247,0.4)]">
+                <div class="w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl text-white shadow-[0_0_30px_rgba(168,85,247,0.5)] border border-purple-400/30">
                     <i data-lucide="check" class="w-10 h-10"></i>
                 </div>
-                <h2 class="text-3xl font-bold mb-3 tracking-tight">Thank You!</h2>
-                <p class="text-white/60 mb-8 leading-relaxed">Your feedback has been successfully submitted.</p>
+                <h2 class="text-3xl font-bold mb-3 tracking-tight text-white">Thank You!</h2>
+                <p class="text-white mb-8 leading-relaxed">Your feedback has been successfully submitted.</p>
                 
-                <button class="bg-white/10 hover:bg-white/20 border border-white/10 text-white font-bold py-3 px-8 rounded-xl transition-all" onclick="resetFormAndReturn()">
+                <button class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white font-bold py-3 px-8 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-lg" onclick="resetFormAndReturn()">
                     Submit Another Response
                 </button>
             </div>
@@ -260,10 +272,10 @@
         <div id="settingsView" class="view w-full max-w-5xl mx-auto">
             <div class="glass-card rounded-3xl p-6 sm:p-10 mb-10">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                    <h2 class="text-2xl font-bold tracking-tight">Admin Console</h2>
+                    <h2 class="text-2xl font-bold tracking-tight text-white">Admin Console</h2>
                     <div class="flex gap-2">
-                        <button class="bg-white/10 hover:bg-white/20 border border-white/10 text-white py-2 px-4 rounded-lg text-sm transition-all" onclick="switchView('dashboard')">Analytics</button>
-                        <button class="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-2 px-4 rounded-lg text-sm font-medium hover:opacity-90 transition" onclick="switchView('survey')">Exit Admin</button>
+                        <button class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-zinc-300 py-2 px-4 rounded-lg text-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg font-medium" onclick="switchView('dashboard')">Analytics</button>
+                        <button class="bg-gradient-to-r from-blue-600 to-purple-600 border border-purple-500/50 text-white py-2 px-4 rounded-lg text-sm font-medium hover:opacity-90 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)] shadow-sm" onclick="switchView('survey')">Exit Admin</button>
                     </div>
                 </div>
 
@@ -271,19 +283,18 @@
                     <div>
                         <!-- Event Management -->
                         <div class="mb-10">
-                            <div class="text-white/50 text-xs font-bold tracking-wider uppercase mb-4 border-b border-white/10 pb-2">Event Management</div>
+                            <div class="text-purple-400 text-xs font-bold tracking-wider uppercase mb-4 border-b border-zinc-800 pb-2">Event Management</div>
                             <div id="event-list-manager" class="flex flex-col max-h-[300px] overflow-y-auto pr-2 mb-4"></div>
                             
-                            <div class="flex gap-2 bg-white/5 p-3 rounded-2xl border border-white/10 border-dashed">
+                            <div class="flex gap-2 bg-zinc-900 p-3 rounded-2xl border border-zinc-800 border-dashed">
                                 <input type="text" id="newEventName" class="control-item !mb-0" placeholder="Event Name..." />
-                                <button class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 rounded-xl font-bold hover:opacity-90 transition shadow-lg shrink-0" onclick="addEventUI()">Add</button>
+                                <button class="bg-gradient-to-r from-blue-600 to-purple-600 border border-purple-500/50 text-white px-6 rounded-xl font-bold hover:opacity-90 transition-all duration-300 hover:scale-105 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)] shrink-0" onclick="addEventUI()">Add</button>
                             </div>
                         </div>
                         
                         <!-- Global Branding -->
                         <div class="mb-10">
-                            <div class="text-white/50 text-xs font-bold tracking-wider uppercase mb-4 border-b border-white/10 pb-2">Global Branding</div>
-                            <div class="form-group"><label class="form-label">Banner Image URL</label><input type="text" id="setHeaderImg" class="control-item" /></div>
+                            <div class="text-purple-400 text-xs font-bold tracking-wider uppercase mb-4 border-b border-zinc-800 pb-2">Global Branding</div>
                             <div class="form-group"><label class="form-label">Intro Text</label><textarea id="setDesc" class="control-item" style="min-height:80px"></textarea></div>
                             <div class="form-group"><label class="form-label">New Password</label>
                                 <input type="text" id="setNewPass" class="control-item no-save-pass" placeholder="Change password..." autocomplete="new-password" spellcheck="false" />
@@ -294,7 +305,7 @@
                     <div>
                         <!-- Questions (CAB) -->
                         <div class="mb-10">
-                            <div class="text-white/50 text-xs font-bold tracking-wider uppercase mb-4 border-b border-white/10 pb-2">Question Editor (CAB)</div>
+                            <div class="text-purple-400 text-xs font-bold tracking-wider uppercase mb-4 border-b border-zinc-800 pb-2">Question Editor (CAB)</div>
                             <div class="form-group"><label class="form-label">Student ID Question</label><input type="text" id="q-studentID" class="control-item" /></div>
                             <div class="form-group"><label class="form-label">Event Selection Title</label><input type="text" id="q-eventSelect" class="control-item" /></div>
                             <div class="form-group"><label class="form-label">CAB Experience Rating</label><input type="text" id="q-cabRating" class="control-item" /></div>
@@ -308,7 +319,7 @@
 
                         <!-- Questions (Market) -->
                         <div class="mb-10">
-                            <div class="text-white/50 text-xs font-bold tracking-wider uppercase mb-4 border-b border-white/10 pb-2">Question Editor (Market)</div>
+                            <div class="text-purple-400 text-xs font-bold tracking-wider uppercase mb-4 border-b border-zinc-800 pb-2">Question Editor (Market)</div>
                             <div class="form-group"><label class="form-label">Market Experience Rating</label><input type="text" id="q-mktRating" class="control-item" /></div>
                             <div class="form-group"><label class="form-label">Market Favorite Part</label><input type="text" id="q-mktFavorite" class="control-item" /></div>
                             <div class="form-group"><label class="form-label">First Time Label</label><input type="text" id="q-mktFirstTime" class="control-item" /></div>
@@ -319,8 +330,8 @@
                     </div>
                 </div>
                 
-                <div class="mt-4 pt-8 border-t border-white/10">
-                    <button class="w-full sm:w-auto px-10 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold py-4 rounded-xl flex justify-center items-center gap-2 transition-all shadow-lg mx-auto" id="saveConfigBtn" onclick="saveAdminSettings()">
+                <div class="mt-4 pt-8 border-t border-zinc-800">
+                    <button class="w-full sm:w-auto px-10 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold py-4 rounded-xl flex justify-center items-center gap-2 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] shadow-[0_0_15px_rgba(168,85,247,0.3)] hover:shadow-[0_0_25px_rgba(168,85,247,0.6)] border border-purple-500/50 mx-auto" id="saveConfigBtn" onclick="saveAdminSettings()">
                         <span>Save All Changes</span>
                         <div class="loader" id="saveLoader"></div>
                     </button>
@@ -330,12 +341,12 @@
 
         <!-- DASHBOARD VIEW -->
         <div id="dashboardView" class="view w-full max-w-7xl mx-auto">
-            <div class="flex flex-col sm:flex-row gap-4 mb-8 glass-card p-4 rounded-2xl">
+            <div class="flex flex-col sm:flex-row gap-4 mb-8 glass-card p-4 rounded-2xl border-white/5">
                 <input id="search" class="control-item !mb-0 flex-1" type="text" placeholder="Search events..." />
                 <div class="flex gap-2">
-                    <button onclick="syncSheetData()" class="bg-white/10 hover:bg-white/20 border border-white/10 text-white py-3 px-6 rounded-xl text-sm transition-all flex items-center gap-2"><i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh</button>
-                    <button onclick="switchView('settings')" class="bg-white/10 hover:bg-white/20 border border-white/10 text-white py-3 px-6 rounded-xl text-sm transition-all flex items-center gap-2"><i data-lucide="settings" class="w-4 h-4"></i> Settings</button>
-                    <button onclick="switchView('survey')" class="bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-6 rounded-xl text-sm font-medium hover:opacity-90 transition">Survey View</button>
+                    <button onclick="syncSheetData()" class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white py-3 px-6 rounded-xl text-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex items-center gap-2 font-medium"><i data-lucide="refresh-cw" class="w-4 h-4"></i> Refresh</button>
+                    <button onclick="switchView('settings')" class="bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white py-3 px-6 rounded-xl text-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex items-center gap-2 font-medium"><i data-lucide="settings" class="w-4 h-4"></i> Settings</button>
+                    <button onclick="switchView('survey')" class="bg-gradient-to-r from-blue-600 to-purple-600 border border-purple-500/50 text-white py-3 px-6 rounded-xl text-sm font-medium hover:opacity-90 transition-all duration-300 hover:-translate-y-1 hover:scale-105 hover:shadow-[0_0_15px_rgba(168,85,247,0.4)]">Survey View</button>
                 </div>
             </div>
             
@@ -343,9 +354,9 @@
         </div>
 
         <!-- Global Footer -->
-        <footer class="mt-auto py-8 text-center text-white/40 text-xs tracking-wider flex flex-col items-center gap-2 w-full">
+        <footer class="mt-auto py-8 text-center text-zinc-500 text-xs tracking-wider flex flex-col items-center gap-2 w-full">
             <span>© <span id="year"></span> Canyon Activities Board</span>
-            <button id="adminLoginBtn" class="opacity-50 hover:opacity-100 transition-opacity uppercase tracking-widest mt-2 bg-transparent border-none text-[10px] cursor-pointer" onclick="showGate()">Admin Access</button>
+            <button id="adminLoginBtn" class="opacity-60 hover:opacity-100 transition-opacity uppercase tracking-widest mt-2 bg-transparent border-none text-[10px] cursor-pointer text-zinc-400" onclick="showGate()">Admin Access</button>
         </footer>
 
     </main>
@@ -353,18 +364,18 @@
     <!-- Admin Login Modal -->
     <div id="gateModal" class="fixed inset-0 z-[1000] hidden items-center justify-center p-4">
         <!-- Backdrop -->
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-md" onclick="hideGate()"></div>
+        <div class="absolute inset-0 bg-zinc-950/80 backdrop-blur-md" onclick="hideGate()"></div>
         <!-- Modal Content -->
-        <div class="relative w-full max-w-sm glass-card rounded-3xl p-8 flex flex-col items-center text-center shadow-2xl">
-            <div class="w-16 h-16 bg-white/10 rounded-2xl p-3 mb-4 flex items-center justify-center border border-white/10">
-                <i data-lucide="lock" class="w-8 h-8 text-white/80"></i>
+        <div class="relative w-full max-w-sm glass-card rounded-3xl p-8 flex flex-col items-center text-center shadow-2xl border-purple-500/30 transition-all duration-500 hover:shadow-[0_0_40px_rgba(168,85,247,0.2)] hover:-translate-y-2">
+            <div class="w-16 h-16 bg-zinc-900 rounded-2xl p-3 mb-4 flex items-center justify-center border border-zinc-800 transition-transform hover:rotate-12">
+                <i data-lucide="lock" class="w-8 h-8 text-zinc-400"></i>
             </div>
-            <h3 class="text-2xl font-bold mb-1">Authorization Required</h3>
-            <p class="text-white/50 text-sm mb-6">Enter board password to continue.</p>
+            <h3 class="text-2xl font-bold mb-1 text-white">Authorization Required</h3>
+            <p class="text-zinc-400 text-sm mb-6">Enter board password to continue.</p>
             
             <input type="password" id="adminPass" class="control-item text-center mb-6 no-save-pass" placeholder="Password" autocomplete="off" spellcheck="false" onkeyup="if(event.key==='Enter') verifyAdmin()"/>
             
-            <button class="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-3 rounded-xl flex justify-center items-center gap-2 transition-all" id="gateBtn" onclick="verifyAdmin()">
+            <button class="w-full bg-gradient-to-r from-blue-600 to-purple-600 border border-purple-500/50 text-white font-bold py-3 rounded-xl flex justify-center items-center gap-2 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] shadow-[0_0_15px_rgba(168,85,247,0.3)] hover:shadow-[0_0_25px_rgba(168,85,247,0.6)]" id="gateBtn" onclick="verifyAdmin()">
                 <span>Authorize & Login</span>
                 <div class="loader" id="gateLoader"></div>
             </button>
@@ -372,7 +383,7 @@
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast" class="glass-card !bg-purple-600/90 text-white font-bold">Update Successful</div>
+    <div id="toast" class="glass-card !bg-zinc-900 !text-white font-bold shadow-xl border !border-purple-500/50">Update Successful</div>
 
 <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw3QFydA5aCuJFFKw2A7oBEJ9G9IBoysQOGfS7XVooXJ-F23vqbfl5_LMpt1UbCERI/exec"; 
@@ -389,9 +400,6 @@
             'mktRating', 'mktFavorite', 'mktFirstTime', 'mktVariety', 'mktPurchase', 'comments'
         ]
     };
-
-    let bgIndex = 0;
-    let bgInterval = null;
 
     // Security Helper
     function escapeHTML(str) {
@@ -412,12 +420,12 @@
         state.view = viewName;
         document.querySelectorAll('.view').forEach(v => {
             v.classList.remove('active');
-            v.style.display = 'none'; // Ensure Tailwind handles display flex/block
+            v.style.display = 'none'; 
         });
         const target = document.getElementById(viewName + 'View');
         if (target) {
             target.style.display = 'block';
-            setTimeout(() => target.classList.add('active'), 10); // Trigger transition
+            setTimeout(() => target.classList.add('active'), 10);
         }
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -432,52 +440,11 @@
             const mkt = (state.config.MarketEvents || "").split(',').map(s => s.trim()).filter(Boolean);
             state.tempEvents = all.map(name => ({ name, isMarket: mkt.includes(name) }));
             applyConfig();
-            initBackgroundRotation(); // Uses the dynamic #bg-container layer
             if (state.view === 'dashboard') renderDashboard();
         } catch (e) { console.error("Sync error", e); }
     }
 
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    }
-
-    function initBackgroundRotation() {
-        const bgContainer = document.getElementById('bg-container');
-        let images = state.responses.map(r => r.imageurl).filter(url => url && url.startsWith('http'));
-        if (images.length === 0) return;
-        images = shuffleArray(images);
-        bgContainer.innerHTML = '';
-        images.forEach((url, i) => {
-            const slide = document.createElement('div');
-            slide.className = 'bg-slide';
-            slide.style.backgroundImage = `url('${url}')`;
-            if (i === 0) slide.classList.add('active');
-            bgContainer.appendChild(slide);
-        });
-        bgIndex = 0; 
-        if (bgInterval) clearInterval(bgInterval);
-        if (images.length > 1) {
-            bgInterval = setInterval(() => {
-                const slides = document.querySelectorAll('.bg-slide');
-                if (slides.length === 0) return;
-                slides[bgIndex].classList.remove('active');
-                bgIndex = (bgIndex + 1) % slides.length;
-                slides[bgIndex].classList.add('active');
-            }, 8000); 
-        }
-    }
-
     function applyConfig() {
-        if (state.config.HeaderImageURL) {
-            document.getElementById('bannerImg').src = state.config.HeaderImageURL;
-            document.getElementById('bannerContainer').classList.remove('hidden');
-        } else {
-            document.getElementById('bannerContainer').classList.add('hidden');
-        }
         if (state.config.SurveyDescription) document.getElementById('surveyDesc').textContent = state.config.SurveyDescription;
         state.questionKeys.forEach(key => {
             const labelEl = document.getElementById('label-' + key);
@@ -489,7 +456,6 @@
         document.getElementById('formEvent').innerHTML = '<option value="">Select an event...</option>' + state.tempEvents.map(e => `<option value="${escapeHTML(e.name)}">${escapeHTML(e.name)}</option>`).join('');
         const hear = (state.config.HearAboutOptions || "Instagram,Email,Flyer,LopeLife App,Word of Mouth").split(',');
         document.getElementById('formHearAbout').innerHTML = '<option value="">Select...</option>' + hear.map(h => `<option value="${escapeHTML(h.trim())}">${escapeHTML(h.trim())}</option>`).join('');
-        document.getElementById('setHeaderImg').value = state.config.HeaderImageURL || "";
         document.getElementById('setDesc').value = state.config.SurveyDescription || "";
         renderEventSettings();
     }
@@ -497,16 +463,16 @@
     function renderEventSettings() {
         const box = document.getElementById('event-list-manager');
         box.innerHTML = state.tempEvents.map((ev, idx) => `
-            <div class="flex items-center bg-white/5 p-2 rounded-xl border border-white/10 gap-3 mb-2">
+            <div class="flex items-center bg-zinc-900 p-2 rounded-xl border border-zinc-800 gap-3 mb-2 transition-all duration-300 hover:-translate-y-1 hover:bg-zinc-800 hover:border-purple-500/30 hover:shadow-[0_5px_15px_rgba(0,0,0,0.3)]">
                 <div class="flex gap-1 shrink-0">
-                    <button class="bg-white/10 hover:bg-white/20 text-white p-1.5 rounded-lg transition disabled:opacity-30" onclick="moveEvent(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}><i data-lucide="chevron-up" class="w-3.5 h-3.5"></i></button>
-                    <button class="bg-white/10 hover:bg-white/20 text-white p-1.5 rounded-lg transition disabled:opacity-30" onclick="moveEvent(${idx}, 1)" ${idx === state.tempEvents.length - 1 ? 'disabled' : ''}><i data-lucide="chevron-down" class="w-3.5 h-3.5"></i></button>
+                    <button class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 p-1.5 rounded-lg transition disabled:opacity-30" onclick="moveEvent(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}><i data-lucide="chevron-up" class="w-3.5 h-3.5"></i></button>
+                    <button class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 p-1.5 rounded-lg transition disabled:opacity-30" onclick="moveEvent(${idx}, 1)" ${idx === state.tempEvents.length - 1 ? 'disabled' : ''}><i data-lucide="chevron-down" class="w-3.5 h-3.5"></i></button>
                 </div>
-                <span class="flex-1 text-sm text-white/90 truncate">${escapeHTML(ev.name)}</span>
-                <label class="flex items-center gap-2 text-xs text-white/50 cursor-pointer shrink-0">
-                    <input type="checkbox" class="accent-purple-500 w-4 h-4 rounded" ${ev.isMarket ? 'checked' : ''} onchange="toggleMarketFlag(${idx}, this.checked)"> Market
+                <span class="flex-1 text-sm text-zinc-200 font-medium truncate">${escapeHTML(ev.name)}</span>
+                <label class="flex items-center gap-2 text-xs text-zinc-500 cursor-pointer shrink-0">
+                    <input type="checkbox" class="accent-purple-500 w-4 h-4 rounded bg-zinc-800 border-zinc-700" ${ev.isMarket ? 'checked' : ''} onchange="toggleMarketFlag(${idx}, this.checked)"> Market
                 </label>
-                <button class="text-red-400 hover:text-red-300 p-2 transition shrink-0" onclick="removeEventUI(${idx})" title="Delete">
+                <button class="text-rose-500 hover:text-rose-400 p-2 transition shrink-0" onclick="removeEventUI(${idx})" title="Delete">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -563,8 +529,8 @@
             const timeLeft = animationEnd - Date.now();
             if (timeLeft <= 0) return clearInterval(interval);
             const particleCount = 50 * (timeLeft / duration);
-            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#0A84FF', '#BF5AF2'] }));
-            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#0A84FF', '#BF5AF2'] }));
+            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#0A84FF', '#BF5AF2', '#34d399'] }));
+            confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#0A84FF', '#BF5AF2', '#34d399'] }));
         }, 250);
     }
 
@@ -624,7 +590,6 @@
         const config = { 
             Events: state.tempEvents.map(e => e.name).join(','), 
             MarketEvents: state.tempEvents.filter(e => e.isMarket).map(e => e.name).join(','), 
-            HeaderImageURL: document.getElementById('setHeaderImg').value, 
             SurveyDescription: document.getElementById('setDesc').value 
         };
         state.questionKeys.forEach(key => { config['q-' + key] = document.getElementById('q-' + key).value; });
@@ -642,25 +607,25 @@
         const dash = document.getElementById('dashboard'); dash.innerHTML = "";
         state.responses.forEach(g => {
             const card = document.createElement('div'); 
-            card.className = "glass-card rounded-2xl overflow-hidden flex flex-col transition-transform hover:-translate-y-2";
+            card.className = "glass-card rounded-2xl overflow-hidden flex flex-col transition-all duration-500 hover:-translate-y-3 hover:scale-[1.02] hover:shadow-[0_15px_40px_rgba(168,85,247,0.2)] hover:border-purple-500/40 border border-zinc-800 cursor-pointer";
             
             const imgHtml = g.imageurl 
                 ? `<img src="${g.imageurl}" class="w-full h-full object-cover">`
-                : `<div class="w-full h-full bg-gradient-to-br from-white/5 to-white/10 flex items-center justify-center"><i data-lucide="image" class="w-8 h-8 text-white/20"></i></div>`;
+                : `<div class="w-full h-full bg-zinc-900 flex items-center justify-center"><i data-lucide="image" class="w-8 h-8 text-zinc-700"></i></div>`;
                 
             card.innerHTML = `
-                <div class="relative h-40 border-b border-white/10">${imgHtml}</div>
+                <div class="relative h-40 border-b border-zinc-800">${imgHtml}</div>
                 <div class="p-6 flex flex-col flex-1">
-                    <h3 class="text-xl font-bold mb-3">${escapeHTML(g.eventname)}</h3>
+                    <h3 class="text-xl font-bold mb-3 text-white">${escapeHTML(g.eventname)}</h3>
                     <div class="flex gap-2 mb-4">
-                        <span class="px-2.5 py-1 rounded-lg text-xs font-bold uppercase bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg">★ ${Number(g.rating || 0).toFixed(1)}</span>
-                        <span class="px-2.5 py-1 rounded-lg text-xs font-bold uppercase bg-white/10 text-white border border-white/10">${g.surveys || 0} Surveys</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-bold uppercase bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md">★ ${Number(g.rating || 0).toFixed(1)}</span>
+                        <span class="px-2.5 py-1 rounded-lg text-xs font-bold uppercase bg-zinc-800 text-zinc-300 border border-zinc-700">${g.surveys || 0} Surveys</span>
                     </div>
-                    <div class="text-xs text-white/60 mb-4 flex flex-wrap gap-2">
-                        <span class="bg-black/30 border border-white/5 px-2 py-1 rounded-md">👤 ${escapeHTML(g.attendance) || "N/A"}</span>
-                        <span class="bg-black/30 border border-white/5 px-2 py-1 rounded-md">🏷️ ${escapeHTML(g.hostingteam) || "CAB"}</span>
+                    <div class="text-xs text-zinc-400 mb-4 flex flex-wrap gap-2">
+                        <span class="bg-zinc-900 border border-zinc-800 px-2 py-1 rounded-md">👤 ${escapeHTML(g.attendance) || "N/A"}</span>
+                        <span class="bg-zinc-900 border border-zinc-800 px-2 py-1 rounded-md">🏷️ ${escapeHTML(g.hostingteam) || "CAB"}</span>
                     </div>
-                    <p class="text-sm text-white/50 leading-relaxed line-clamp-3">${escapeHTML(g.summary) || "Henry AI summary pending..."}</p>
+                    <p class="text-sm text-zinc-500 leading-relaxed line-clamp-3">${escapeHTML(g.summary) || "Henry AI summary pending..."}</p>
                 </div>`;
             dash.appendChild(card);
         });
@@ -671,11 +636,11 @@
         const t = document.getElementById('toast'); 
         t.textContent = msg; 
         if(isError) {
-            t.classList.remove('!bg-purple-600/90');
-            t.classList.add('!bg-red-600/90');
+            t.classList.add('!border-rose-500/50');
+            t.classList.remove('!border-purple-500/50');
         } else {
-            t.classList.remove('!bg-red-600/90');
-            t.classList.add('!bg-purple-600/90');
+            t.classList.remove('!border-rose-500/50');
+            t.classList.add('!border-purple-500/50');
         }
         t.style.display = 'block'; 
         setTimeout(() => t.style.display = 'none', 3500); 
